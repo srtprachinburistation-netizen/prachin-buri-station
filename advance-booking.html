@@ -1,110 +1,296 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<meta name="theme-color" content="#0f2f5f" />
-<meta name="description" content="เครื่องมือช่วยคำนวณวันเริ่มจองตั๋วรถไฟ สถานีรถไฟปราจีนบุรี พร้อมส่งคำขอกลับ LINE" />
-<title>คำนวณวันเริ่มจองตั๋วรถไฟ | สถานีรถไฟปราจีนบุรี</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#710e1d">
+<meta name="description" content="ตรวจสอบวันเริ่มจองตั๋วรถไฟล่วงหน้า เลือกสายทาง ขบวน สถานีขึ้นลง และวันเดินทาง พร้อมข้อมูล D-Ticket และ LINE สถานีรถไฟปราจีนบุรี">
+<title>ตรวจวันเริ่มจองตั๋วรถไฟ | สถานีรถไฟปราจีนบุรี</title>
 <style>
-/* ต้นแบบการจัดวาง สี และสัดส่วน: ผู้ใช้พัฒนาด้วยตนเอง ณ train-booking GitHub Pages */
-:root{--navy:#0f2f5f;--blue:#1557a6;--blue2:#1d4ed8;--gold:#c99a2e;--red:#7b1e22;--green:#047857;--ink:#102033;--muted:#64748b;--bg:#f5f8fc;--card:#ffffff;--line:rgba(15,47,95,.12);--shadow:0 24px 70px rgba(15,47,95,.14);--radius:24px}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;font-family:Sarabun,Tahoma,system-ui,-apple-system,BlinkMacSystemFont,sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 6%,rgba(21,87,166,.16),transparent 28%),radial-gradient(circle at 90% 10%,rgba(201,154,46,.14),transparent 26%),linear-gradient(135deg,#fbfdff 0%,#edf5ff 44%,#f8fafc 100%);overflow-x:hidden}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.55;background-image:linear-gradient(rgba(15,47,95,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(15,47,95,.035) 1px,transparent 1px);background-size:38px 38px;mask-image:linear-gradient(to bottom,#000 0%,transparent 78%)}a{color:inherit}
-.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.82);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}.topbar-inner{max-width:1320px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{display:flex;align-items:center;gap:12px;min-width:0}.seal{width:44px;height:44px;border-radius:999px;background:linear-gradient(135deg,var(--navy),var(--blue));display:grid;place-items:center;color:white;font-weight:900;box-shadow:0 10px 22px rgba(15,47,95,.22);border:2px solid rgba(255,255,255,.9);flex:none}.brand-title{font-size:16px;font-weight:900;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brand-sub{font-size:11px;color:var(--muted);font-weight:700;margin-top:2px;letter-spacing:.04em}.badge{display:inline-flex;align-items:center;gap:8px;background:#fff7e5;border:1px solid rgba(201,154,46,.34);color:#8a640f;border-radius:999px;padding:9px 12px;font-size:12px;font-weight:900;white-space:nowrap}
-.tool-nav{max-width:1320px;margin:22px auto 0;padding:0 20px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tool-tab{border:1px solid var(--line);background:rgba(255,255,255,.86);box-shadow:0 12px 30px rgba(15,47,95,.08);border-radius:22px;padding:15px 18px;font:900 16px Sarabun,Tahoma,sans-serif;color:var(--navy);cursor:pointer;transition:.18s;display:flex;align-items:center;justify-content:center;gap:10px;text-align:center;text-decoration:none}.tool-tab:hover{transform:translateY(-1px);box-shadow:0 18px 38px rgba(15,47,95,.12)}.tool-tab.active{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border-color:transparent}.tool-info{max-width:1320px;margin:14px auto 0;padding:0 20px}.tool-info-card{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:22px;padding:14px 18px;font-size:13px;font-weight:850;line-height:1.55;box-shadow:0 10px 24px rgba(15,47,95,.06)}
-.hero{max-width:1320px;margin:0 auto;padding:38px 20px 18px;display:grid;grid-template-columns:1.02fr .98fr;gap:22px;align-items:stretch}.hero-card{position:relative;overflow:hidden;border-radius:32px;background:linear-gradient(135deg,var(--navy),#123e7d 62%,#0b2248);color:#fff;box-shadow:var(--shadow);padding:34px;min-height:330px;display:flex;flex-direction:column;justify-content:space-between}.hero-card:before{content:"";position:absolute;inset:-40%;background:radial-gradient(circle,rgba(255,255,255,.13),transparent 42%);transform:translate(30%,-10%)}.hero-card>*{position:relative;z-index:1}.eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:8px 12px;font-size:12px;font-weight:900;width:max-content;backdrop-filter:blur(10px)}h1{font-size:clamp(30px,4vw,58px);line-height:1.04;margin:22px 0 14px;letter-spacing:-.04em;font-weight:900}.hero p{margin:0;color:#dbeafe;font-weight:600;line-height:1.65;max-width:680px}.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:26px}.stat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:14px 12px;backdrop-filter:blur(10px)}.stat strong{display:block;font-size:22px;color:white;line-height:1;font-weight:900}.stat span{font-size:11px;color:#bfdbfe;font-weight:800}
-.rule-panel{display:grid;gap:14px}.rule{background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:24px;padding:20px;box-shadow:0 14px 32px rgba(15,47,95,.08);display:flex;gap:14px;align-items:flex-start}.rule-icon{width:48px;height:48px;border-radius:18px;display:grid;place-items:center;font-size:24px;flex:none}.r1{background:#e8fff5}.r2{background:#eaf3ff}.r3{background:#f1f5f9}.rule h3{margin:0 0 4px;font-size:18px;font-weight:900;color:var(--navy)}.rule p{margin:0;font-size:13px;color:var(--muted);font-weight:600;line-height:1.55}
-.layout{max-width:1320px;margin:0 auto;padding:16px 20px 42px;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(340px,.92fr);gap:22px;align-items:start}.panel{background:rgba(255,255,255,.9);border:1px solid var(--line);border-radius:32px;box-shadow:var(--shadow);overflow:hidden;backdrop-filter:blur(14px)}.panel-head{padding:24px 26px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:14px;background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,.74))}.panel-head h2{margin:0;font-size:21px;font-weight:900;color:var(--navy);letter-spacing:-.02em}.panel-head p{margin:3px 0 0;font-size:12px;color:var(--muted);font-weight:700}.panel-body{padding:26px}.grid{display:grid;gap:16px}.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
-label{display:block;font-size:12px;font-weight:900;color:#334155;margin:0 0 7px}.hint{font-size:11px;color:var(--muted);font-weight:700;margin-top:6px;line-height:1.55}input,select{width:100%;border:2px solid #dbe5f2;border-radius:16px;background:#fff;padding:13px 14px;font:800 15px Sarabun,Tahoma,sans-serif;color:var(--ink);outline:none;transition:.18s;box-shadow:0 6px 14px rgba(15,47,95,.04)}input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(21,87,166,.12),0 8px 18px rgba(15,47,95,.06)}select:disabled{background:#f1f5f9;color:#94a3b8}.switch{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#eef4fb;border:1px solid #dbeafe;border-radius:20px;padding:7px}.switch button{border:0;border-radius:15px;padding:12px 10px;background:transparent;color:#64748b;font:900 14px Sarabun,Tahoma,sans-serif;cursor:pointer;transition:.18s}.switch button.active{background:#fff;color:var(--blue);box-shadow:0 8px 18px rgba(15,47,95,.1)}.subcard{background:#f8fbff;border:1px solid #dbeafe;border-radius:24px;padding:18px}.hidden{display:none!important}.divider{height:1px;background:var(--line);margin:18px 0}.distance-box{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;text-align:center;background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:14px;margin-top:12px}.distance-box strong{font-size:18px;color:var(--blue)}.distance-box span{font-size:11px;color:var(--muted);font-weight:900}
-.result-shell{position:sticky;top:88px}.result-card{min-height:360px;display:grid;place-items:center;text-align:center;padding:28px}.empty{color:#94a3b8}.empty .big{font-size:58px;opacity:.34;margin-bottom:10px}.empty p{font-weight:800;line-height:1.65;margin:0}.error{background:#fff1f2;border:1px solid #fecdd3;color:#be123c;border-radius:22px;padding:18px;text-align:left;font-weight:900;line-height:1.55}.booking{border-radius:30px;padding:7px;width:100%;box-shadow:0 22px 48px rgba(15,47,95,.17)}.booking.green{background:linear-gradient(180deg,#34d399,#059669)}.booking.blue{background:linear-gradient(180deg,#60a5fa,#2563eb)}.booking.gray{background:linear-gradient(180deg,#94a3b8,#475569)}.booking-inner{background:#fff;border-radius:24px;padding:28px;text-align:left}.pill{display:inline-flex;justify-content:center;align-items:center;background:#f1f5f9;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:900;color:#475569;margin-bottom:14px}.days{font-size:clamp(34px,5vw,56px);line-height:1;margin:4px 0 18px;font-weight:900;letter-spacing:-.04em}.days.green{color:#059669}.days.blue{color:#2563eb}.days.gray{color:#475569}.datebox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:22px;padding:20px}.datebox .label{font-size:11px;color:#64748b;font-weight:900;letter-spacing:.03em}.datebox .date{font-size:clamp(22px,3vw,32px);font-weight:900;color:#0f172a;margin:8px 0}.time{background:#eaf3ff;border:1px solid #bfdbfe;color:var(--blue);border-radius:15px;padding:11px 12px;font-size:13px;font-weight:900;margin-top:14px}
-.notice{max-width:1320px;margin:0 auto 48px;padding:0 20px}.notice-card{background:rgba(255,255,255,.86);border:1px solid var(--line);border-radius:30px;box-shadow:0 16px 44px rgba(15,47,95,.08);padding:24px}.notice h2{margin:0 0 14px;color:var(--navy);font-size:19px;font-weight:900}.notice ul{margin:0;padding-left:20px;display:grid;gap:9px;color:#475569;font-size:13px;font-weight:650;line-height:1.65}.footer{text-align:center;padding:28px 20px 46px;background:#0b2248;color:#bfdbfe;font-size:12px;font-weight:800;line-height:1.8}
-/* ส่วนเสริมสำหรับบริการ LINE ปราจีนบุรี ไม่รบกวนสัดส่วนต้นแบบ */
-.status{font-size:12px;font-weight:800;border-radius:16px;padding:12px 14px;background:#eef4fb;color:#1557a6;border:1px solid #bfdbfe;line-height:1.65}.status.ok{background:#ecfdf5;color:#047857;border-color:#a7f3d0}.status.warn{background:#fff7ed;color:#9a3412;border-color:#fed7aa}.status.err{background:#fff1f2;color:#be123c;border-color:#fecdd3}.action{border:0;border-radius:15px;padding:13px 15px;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;font:900 15px Sarabun,Tahoma,sans-serif;cursor:pointer;min-height:48px;width:100%;text-align:center;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}.action:disabled{opacity:.5;cursor:default}.action.light{background:#eaf3ff;color:var(--blue);border:1px solid #bfdbfe}.action.gold{background:#fff7e5;color:#8a640f;border:1px solid #e4c979}.actionrow{display:grid;grid-template-columns:1fr 1fr;gap:9px}.result-details{font-size:12px;color:#64748b;line-height:1.9;text-align:left;margin-top:14px}.result-details .r{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #e2e8f0;padding:4px 0}.result-details b{color:#0f172a;text-align:right}.result-note{font-size:11px;color:#64748b;line-height:1.65;text-align:left;margin:10px 0}.station-browser{max-width:1320px;margin:0 auto 26px;padding:0 20px}.station-browser details{background:#fff;border:1px solid var(--line);border-radius:25px;padding:20px;box-shadow:0 10px 24px rgba(15,47,95,.06)}.station-browser summary{cursor:pointer;color:var(--navy);font-weight:900}.station-grid{max-height:250px;overflow:auto;margin:12px 0;display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.station-item{display:flex;justify-content:space-between;gap:8px;border:1px solid #e2e8f0;border-radius:12px;padding:8px 10px;font-size:12px;background:#f8fafc}.station-item strong{white-space:nowrap;color:var(--blue)}.small-note{font-size:11px;color:#64748b;line-height:1.7;margin:8px 0}.modeinfo{font-size:11px;color:#64748b;line-height:1.5}.km-details{display:flex;justify-content:space-between;font-size:11px;color:#64748b;margin-top:8px;gap:10px}.buttonlink{color:var(--blue);font-weight:900;text-decoration:underline}
-@media(max-width:980px){.hero{grid-template-columns:1fr;padding-top:22px}.layout{grid-template-columns:1fr}.result-shell{position:relative;top:auto}.hero-card{min-height:auto}.brand-title{white-space:normal}.badge{display:none}}@media(max-width:640px){.topbar-inner{padding:12px 14px}.hero,.layout,.notice,.station-browser,.tool-nav,.tool-info{padding-left:14px;padding-right:14px}.hero-card{border-radius:24px;padding:24px}.hero-stats,.grid-2,.grid-3{grid-template-columns:1fr}.panel,.notice-card{border-radius:24px}.panel-head{padding:20px}.panel-body{padding:20px}.switch{grid-template-columns:1fr}.distance-box{grid-template-columns:1fr}.distance-box .sep{display:none}.result-card{min-height:300px}.rule{border-radius:20px}.tool-nav{grid-template-columns:1fr}.tool-tab{font-size:14px;padding:13px 12px}.station-grid,.actionrow{grid-template-columns:1fr}}
+:root{--wine:#710e1d;--wine-dark:#490815;--wine-deep:#360914;--wine-light:#9f1830;--gold:#d2a95e;--paper:#f8f6f4;--white:#fff;--ink:#271d22;--muted:#726870;--stroke:#ebdfdd;--shadow:0 22px 55px rgba(69,19,27,.10);--accent:#1968ab;--accent-soft:#eaf3fc}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Noto Sans Thai','Sarabun',Tahoma,Arial,sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit}
+button{cursor:pointer}a{text-decoration:none;color:inherit}
+:focus-visible{outline:3px solid #d8a95f;outline-offset:2px}
+.top{background:var(--wine-deep);color:#fff;position:relative;z-index:4}
+.top::after{content:'';height:3px;display:block;background:linear-gradient(90deg,#d6ad67,#f1d9aa,#b3764d)}
+.top-inner{max-width:1200px;margin:auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.identity{display:flex;align-items:center;gap:13px;min-width:0}
+.logo{width:49px;height:49px;border:1px solid #d0ad7a88;border-radius:16px;display:grid;place-items:center;background:#ffffff12;flex:none}
+.logo svg{width:29px;height:29px;stroke:#f5e8d1}
+.identity h1{font-size:19px;font-weight:850;line-height:1.28;margin:0;letter-spacing:-.02em}
+.identity p{margin:3px 0 0;color:#e8c9c6;font-size:11px;letter-spacing:.055em;font-weight:650}
+.header-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.header-links a{padding:10px 14px;border-radius:12px;font-size:12px;font-weight:750;white-space:nowrap;color:#f8eaeb;transition:background .2s}
+.header-links a:hover{background:#ffffff19}
+.header-links a.highlight{background:#ffffff15;border:1px solid #ffffff26}
+main{max-width:1200px;padding:0 24px 60px;margin:0 auto}
+.hero{position:relative;margin:30px 0 21px;overflow:hidden;min-height:246px;border-radius:28px;background:linear-gradient(115deg,#660a1b 0%,#831126 52%,#a83640 100%);color:#fff;padding:37px 43px;box-shadow:0 25px 60px #73132923}
+.hero::before{content:'';position:absolute;right:-120px;top:-190px;width:480px;height:480px;border:1px solid #ffffff28;border-radius:50%;box-shadow:0 0 0 42px #ffffff09,0 0 0 86px #ffffff08,0 0 0 132px #ffffff06;pointer-events:none}
+.hero::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(145deg,transparent 57%,#ffffff12 57.2%,transparent 57.6%),linear-gradient(151deg,transparent 63%,#ffffff0c 63.2%,transparent 63.7%)}
+.hero-content{position:relative;z-index:1;max-width:710px}
+.kicker{color:#f2d7c5;display:flex;align-items:center;gap:9px;letter-spacing:.05em;font-size:12px;font-weight:800}
+.kicker .dash{height:2px;width:24px;background:var(--gold);border-radius:5px}
+.hero h2{font-size:clamp(31px,3.9vw,48px);font-weight:900;letter-spacing:-.045em;line-height:1.28;margin:17px 0 12px}
+.hero p{margin:0;color:#f7dfe1;font-size:14px;line-height:1.9;max-width:630px}
+.hero-foot{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:25px}
+.hero-foot span{display:inline-flex;align-items:center;gap:8px;border:1px solid #ffffff35;border-radius:999px;padding:7px 12px;background:#ffffff10;color:#f8e7e7;font-size:11px;font-weight:800}
+.spark{width:6px;height:6px;background:#f0c878;border-radius:50%;display:inline-block}
+.workarea{display:grid;grid-template-columns:minmax(0,1.16fr) minmax(345px,.84fr);gap:20px;align-items:start}
+.card{background:#fff;border:1px solid var(--stroke);border-radius:24px;box-shadow:var(--shadow)}
+.form-card{overflow:hidden}
+.card-top{padding:22px 27px;border-bottom:1px solid #eee5e4;display:flex;align-items:center;gap:12px}
+.card-icon{width:43px;height:43px;border-radius:14px;background:#fff0f1;color:var(--wine);display:grid;place-items:center;flex:none;font-size:20px}
+.card-top h3{margin:0;font-size:20px;letter-spacing:-.025em;font-weight:900}
+.card-top p{margin:3px 0 0;color:var(--muted);font-size:12px}
+.form-body{padding:26px 27px 28px}
+.step-title{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:900;color:#4b353d;margin-bottom:13px}
+.step-no{width:24px;height:24px;background:#f8e8e9;color:var(--wine);border-radius:8px;display:grid;place-items:center;font-size:11px;font-weight:900}
+.line-picker{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.route{border:1.5px solid #e8e4e3;background:#fff;border-radius:14px;padding:11px 6px 10px;min-height:105px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transition:transform .16s,border-color .16s,box-shadow .16s;min-width:0}
+.route:hover{transform:translateY(-2px);border-color:var(--route);box-shadow:0 9px 22px #32121913}
+.route[aria-pressed="true"]{background:var(--route-bg);border-color:var(--route);box-shadow:0 0 0 2px var(--route-bg)}
+.route .symbol{width:27px;height:27px;border-radius:9px;background:var(--route);display:grid;place-items:center;color:#fff;font-size:14px;box-shadow:0 5px 11px #32121918}
+.route .route-title{font-size:12px;font-weight:900;line-height:1.45}
+.route small{font-size:10px;color:var(--muted);font-weight:650;line-height:1.25}
+.route--north{--route:#1968ab;--route-bg:#eaf3fc}.route--ubon{--route:#599054;--route-bg:#eff6ec}.route--nongkhai{--route:#9ab941;--route-bg:#f7fae9}.route--east{--route:#773dbd;--route-bg:#f5effc}.route--south{--route:#e68b0e;--route-bg:#fff5e8}
+.selected-note{background:var(--accent-soft);border-left:3px solid var(--accent);color:#4d4145;padding:10px 13px;font-size:12px;border-radius:9px;margin:13px 0 0;line-height:1.6;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.selected-note strong{color:var(--accent)}
+.selected-note.hidden{display:none}
+.section-divider{height:1px;background:#eee9e7;margin:22px 0 21px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.field{min-width:0}.field.full{grid-column:1/-1}
+.field label{display:flex;gap:7px;align-items:center;margin:0 0 8px;color:#46373c;font-weight:850;font-size:12px}
+.field label .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.control{border:1.5px solid #e5dcdd;border-radius:12px;background:#fcfbfb;width:100%;height:48px;padding:0 14px;outline:none;color:#2f282a;font-size:13px;font-weight:720;transition:border-color .15s,box-shadow .15s}
+.control:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent)}
+.control:disabled{color:#a29a9e;background:#f7f4f4;cursor:not-allowed}
+.hint{color:#8a7e83;font-size:11px;line-height:1.7;margin-top:7px}
+.swap-wrap{position:relative}.swap{position:absolute;top:25px;left:calc(50% - 18px);z-index:2;border:1px solid #e9dfe0;background:white;color:var(--wine);width:36px;height:36px;border-radius:50%;font-size:17px;box-shadow:0 4px 14px #49101b1c}
+.control-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.calculate{border:0;display:flex;justify-content:center;align-items:center;gap:11px;width:100%;height:54px;margin-top:20px;border-radius:13px;color:#fff;background:linear-gradient(105deg,var(--wine),#a11c32);font-weight:900;letter-spacing:.008em;box-shadow:0 11px 22px #71101e23;transition:transform .16s,filter .16s}
+.calculate:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.result-card{padding:0;overflow:hidden;position:sticky;top:19px}
+.result-head{padding:25px 25px 16px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.result-head h3{margin:0;font-size:20px;font-weight:900;color:var(--wine)}
+.result-head p{margin:4px 0 0;font-size:12px;color:var(--muted)}
+.result-icon{width:39px;height:39px;flex:none;display:grid;place-items:center;border-radius:13px;background:#fbe9ed;font-size:20px;color:var(--wine)}
+.result-content{padding:0 25px 26px}
+.placeholder{min-height:343px;background:#fbf9f8;border:1px dashed #ebdfe0;border-radius:18px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:29px;color:#85757e}
+.placeholder .visual{width:75px;height:75px;border-radius:22px;background:#f6ebea;display:grid;place-items:center;font-size:37px;margin-bottom:17px}
+.placeholder strong{color:#57434b;font-size:15px}.placeholder span{font-size:12px;line-height:1.8;margin-top:6px}
+.result-route{display:inline-flex;align-items:center;gap:8px;color:var(--accent);font-size:12px;font-weight:900;background:var(--accent-soft);padding:8px 11px;border-radius:10px;margin-bottom:12px}
+.result-big{background:linear-gradient(135deg,#fff8f9,#fff2f3);border:1px solid #f3d8db;border-radius:17px;padding:22px 20px;margin-bottom:17px}
+.result-big .mini{color:#8f4e5c;font-size:12px;font-weight:800}
+.result-big .date{color:var(--wine);font-size:clamp(24px,2.9vw,31px);font-weight:950;line-height:1.4;letter-spacing:-.025em;margin:4px 0 4px}
+.result-big .time{color:#8b2032;font-size:14px;font-weight:900;line-height:1.65}
+.train-name{font-size:12px;color:#68565d;line-height:1.8;margin-bottom:13px;font-weight:730}
+.numbers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin:15px 0 12px}
+.number{background:#fbf9f8;border:1px solid #f1e9e7;border-radius:12px;padding:11px 8px;text-align:center}
+.number strong{display:block;color:#34252b;font-size:15px}.number span{color:#897c81;font-size:10px;line-height:1.3}
+.share-note{color:#81737a;font-size:11px;line-height:1.8;margin:13px 0}
+.result-warning{background:#fff6e9;color:#8d5c13;border:1px solid #f4ddb6;padding:10px 12px;border-radius:10px;font-size:11px;line-height:1.7;margin:12px 0}
+.action-line{width:100%;border:0;border-radius:12px;background:var(--wine);color:#fff;padding:14px 12px;font-size:13px;font-weight:900;cursor:pointer}
+.action-line:disabled{opacity:.60;cursor:default}
+.sub-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px}
+.sub-actions button,.sub-actions a{border:1px solid #e7dcdc;border-radius:11px;background:#fff;font-weight:800;color:#694951;text-align:center;padding:11px 7px;font-size:12px}
+.sub-actions a{background:#fff7eb;color:#875522;border-color:#f0dfc5}
+.feedback{border-radius:12px;padding:12px 14px;font-size:12px;font-weight:750;line-height:1.75;margin-bottom:15px}
+.feedback[hidden]{display:none}.feedback.success{background:#ebf7f1;border:1px solid #a4ddc2;color:#166446}.feedback.warn{background:#fff8ec;border:1px solid #f3d8ad;color:#865b1e}.feedback.error{background:#fff1f2;border:1px solid #f6c9d0;color:#a81f3c}
+.rules{margin-top:20px;background:#fff;border:1px solid var(--stroke);border-radius:23px;padding:23px 25px;box-shadow:0 9px 28px #3b111b09}
+.rules-heading{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:900;color:#4e303a;margin:0 0 15px}
+.rulegrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.rule-item{background:#faf8f7;border:1px solid #eee6e5;border-radius:14px;padding:15px 16px}
+.rule-item strong{display:block;color:var(--wine);font-size:19px;line-height:1.3;margin:0 0 3px}.rule-item span{color:#72646a;font-size:11px;line-height:1.5}
+.special-note{border-left:3px solid #c6a065;margin-top:13px;padding:5px 12px;color:#796870;font-size:11px;line-height:1.75}
+.channellinks{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0 0}
+.link-tile{display:flex;align-items:center;gap:14px;background:#fff;padding:18px 20px;border:1px solid var(--stroke);border-radius:17px;box-shadow:0 8px 28px #45131b09;transition:transform .18s,border-color .18s}
+.link-tile:hover{transform:translateY(-2px);border-color:#c9a6aa}
+.tile-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:#f9e9eb;color:var(--wine);font-size:22px;flex:none}
+.link-tile strong{font-size:13px;display:block}.link-tile span{font-size:11px;color:#8b7c81;display:block;line-height:1.5;margin-top:3px}.link-tile .arrow{margin-left:auto;color:var(--wine);font-size:17px}
+.palette{margin:20px 0 0;padding:19px 22px;background:#fff;border:1px solid var(--stroke);border-radius:18px}
+.palette summary{font-weight:900;color:#64434c;font-size:13px;cursor:pointer}
+.palette-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:15px;margin:18px 0 0}
+.palette-group h4{font-size:12px;margin:0 0 10px;color:#403137}
+.palette-chip{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:10px;color:#6b5b61;line-height:1.4}
+.palette-chip i{display:inline-block;width:20px;height:11px;border-radius:5px;flex:none;background:var(--chip)}
+.palette-note{color:#8d8185;font-size:10px;margin:16px 0 0;line-height:1.7}
+.footer{background:#470c17;color:#f0dfe1;margin-top:36px;padding:24px}
+.footer-inner{max-width:1152px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:15px;font-size:11px;line-height:1.8}
+.footer small{color:#d2adb5;font-size:10px}
+@media(max-width:1050px){.workarea{grid-template-columns:minmax(0,1fr)}.result-card{position:static}.hero{padding:31px}.palette-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.top-inner{padding:12px 16px}.identity h1{font-size:15px}.identity p{font-size:9px}.logo{width:42px;height:42px}.header-links{display:none}main{padding:0 14px 45px}.hero{margin:16px 0;padding:25px 22px;min-height:210px;border-radius:20px}.hero h2{font-size:29px}.hero p{font-size:12px}.hero-foot{margin-top:16px}.card{border-radius:18px}.card-top{padding:18px 18px}.form-body{padding:18px}.line-picker{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.route{min-height:91px;padding:9px 3px}.route .route-title{font-size:11px}.route small{font-size:9px}.fields{grid-template-columns:1fr}.swap{right:10px;left:auto;top:83px}.control-wrap{grid-template-columns:1fr;gap:16px}.result-head{padding:20px 18px 14px}.result-content{padding:0 18px 20px}.placeholder{min-height:220px}.rules{padding:18px}.rulegrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.rule-item{padding:12px 8px;text-align:center}.rule-item strong{font-size:16px}.rule-item span{font-size:10px}.channellinks{grid-template-columns:1fr;gap:9px}.link-tile{padding:13px 15px}.palette-grid{grid-template-columns:repeat(2,1fr)}.footer-inner{display:block;text-align:center}}
+@media(max-width:380px){.line-picker{grid-template-columns:repeat(2,minmax(0,1fr))}.hero h2{font-size:26px}.numbers{grid-template-columns:repeat(3,1fr)}.number strong{font-size:13px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 </style>
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-<script src="./advance-booking.js?v=55"></script>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js" defer></script>
+<script src="./advance-booking.js?v=57" defer></script>
+
 </head>
 <body>
-<header class="topbar"><div class="topbar-inner"><div class="brand"><div class="seal">SRT</div><div><div class="brand-title">เครื่องมือคำนวณตั๋วรถไฟ</div><div class="brand-sub">PRACHINBURI RAILWAY STATION</div></div></div><div class="badge">จองล่วงหน้า / ข้อมูลการเดินทาง</div></div></header>
-<nav class="tool-nav" aria-label="เมนูเครื่องมือ"><a class="tool-tab active" href="?tool=booking&mode=station" aria-current="page">📅 คำนวณการจองตั๋วล่วงหน้า</a><a class="tool-tab" href="https://tumwijitaof-commits.github.io/train-booking/?tool=monthly" target="_blank" rel="noopener noreferrer">🎟️ คำนวณราคาตั๋วเดือน ↗</a></nav>
-<div class="tool-info"><div class="tool-info-card">หมายเหตุ: ระบบนี้เป็นเครื่องมือช่วยคำนวณเบื้องต้นเท่านั้น วันเปิดขายจริง ข้อมูลรถ และราคาอาจเปลี่ยนแปลง กรุณาตรวจสอบกับ D-Ticket หรือเจ้าหน้าที่ก่อนทำรายการ</div></div>
-<section class="hero"><div class="hero-card"><div><div class="eyebrow">🚆 ระบบช่วยคำนวณเบื้องต้น</div><h1>คำนวณวันเริ่มจองตั๋ว<br>ได้รวดเร็วและแม่นยำขึ้น</h1><p>เลือกสายทาง ขบวนรถ และสถานีที่เดินทาง หรือกรอกระยะทางด้วยตนเอง ระบบจะคำนวณสัดส่วนการเดินทางและวันจองล่วงหน้าให้อัตโนมัติ</p></div><div class="hero-stats"><div class="stat"><strong>90</strong><span>วัน เมื่อเดินทาง ≥ 60%</span></div><div class="stat"><strong>30</strong><span>วัน เมื่อเดินทาง ≥ 25%</span></div><div class="stat"><strong>1</strong><span>วัน เมื่อเดินทาง &lt; 25%</span></div></div></div><div class="rule-panel"><div class="rule"><div class="rule-icon r1">✅</div><div><h3>จองล่วงหน้า 90 วัน</h3><p>เมื่อระยะทางเดินทางจริงตั้งแต่ 60% ขึ้นไปของระยะทางขบวนรถ</p></div></div><div class="rule"><div class="rule-icon r2">📅</div><div><h3>จองล่วงหน้า 30 วัน</h3><p>เมื่อระยะทางเดินทางจริงตั้งแต่ 25% แต่ไม่ถึง 60% ของระยะทางขบวนรถ</p></div></div><div class="rule"><div class="rule-icon r3">🎫</div><div><h3>จองล่วงหน้า 1 วัน</h3><p>เมื่อระยะทางเดินทางจริงน้อยกว่า 25% ของระยะทางขบวนรถ</p></div></div></div></section>
-<main class="layout"><section class="panel"><div class="panel-head"><div><h2>กรอกข้อมูลการเดินทาง</h2><p>ระบบคำนวณให้อัตโนมัติเมื่อข้อมูลครบ</p></div></div><div class="panel-body grid"><div><label for="travelDate">วันที่ต้องการเดินทาง</label><input id="travelDate" type="date" required /><div class="hint">ระบบจะนับย้อนหลังจากวันที่เดินทางตามจำนวนวันที่จองล่วงหน้า</div></div><div class="switch" role="group" aria-label="เลือกวิธีกรอกข้อมูล"><button id="modeStation" class="active" type="button">เลือกจากสถานี</button><button id="modeManual" type="button">กรอกระยะทางเอง</button></div>
-<div id="stationMode" class="subcard grid"><div class="grid grid-2"><div><label for="selectedLine">สายทาง</label><select id="selectedLine"><option value="">- เลือกสายทาง -</option></select></div><div><label for="selectedTrain">ขบวนรถ</label><select id="selectedTrain" disabled><option value="">ไม่ระบุขบวน / เลือกเอง</option></select></div></div>
-<div id="trainManualBox" class="grid grid-2"><div><label for="trainOrigin">ต้นทางของขบวนรถ</label><select id="trainOrigin" disabled><option value="">- เลือก -</option></select></div><div><label for="trainDest">ปลายทางของขบวนรถ</label><select id="trainDest" disabled><option value="">- เลือก -</option></select></div></div>
-<div class="divider"></div><div class="grid grid-2"><div><label for="passOrigin">สถานีขึ้นของผู้โดยสาร</label><select id="passOrigin" disabled><option value="">- เลือก -</option></select></div><div><label for="passDest">สถานีลงของผู้โดยสาร</label><select id="passDest" disabled><option value="">- เลือก -</option></select></div></div><div id="distanceBox" class="distance-box hidden"><div><span>ระยะทางขบวนรถ</span><strong id="showTotal">—</strong></div><div class="sep">|</div><div><span>ระยะทางเดินทางจริง</span><strong id="showPassenger">—</strong></div></div><div id="stationKm" class="km-details hidden"></div><div class="modeinfo" id="kmReferenceNote">เลข กม.จะเริ่มนับ 0 จากสถานีต้นทางของขบวนที่เลือก โดยใช้ระยะทางระหว่างสถานีจากข้อมูลอ้างอิง • โปรดตรวจรายการจอดจริงใน D-Ticket</div></div>
-<div id="manualMode" class="subcard grid hidden"><div class="grid grid-2"><div><label for="totalDistance">ระยะทางวิ่งทั้งหมดของขบวนรถ (กม.)</label><input id="totalDistance" type="number" min="0.1" step="any" placeholder="เช่น 751" /></div><div><label for="passengerDistance">ระยะทางเดินทางจริงของผู้โดยสาร (กม.)</label><input id="passengerDistance" type="number" min="0.1" step="any" placeholder="เช่น 480" /></div></div><div><label for="reservationType">ประเภทการจอง</label><select id="reservationType"><option value="reserved">ขบวนสำรองที่นั่ง</option><option value="nonreserved">ขบวนไม่สำรองที่นั่ง</option></select></div><div class="hint">กรอก กม.เองเพื่อคำนวณหน้าเว็บเท่านั้น การส่งเข้าบอต V53 ต้องเลือกขบวนรถจากรายการสถานี</div></div>
-<div id="liffStatus" class="status" role="status" aria-live="polite">กำลังตรวจสอบการเชื่อมต่อ LINE…</div>
-</div></section>
-<aside class="panel result-shell"><div class="panel-head"><div><h2>ผลการคำนวณ</h2><p>แสดงวันเริ่มจองตั๋วและสัดส่วนการเดินทาง</p></div></div><div id="result" class="result-card" aria-live="polite"><div class="empty"><div class="big">🧮</div><p>กรุณาระบุข้อมูลให้ครบถ้วน<br>เพื่อคำนวณวันจองให้อัตโนมัติ</p></div></div></aside></main>
-<section class="station-browser"><details id="allStations"><summary>📍 ดู กม.สถานีทั้งหมดในสายทาง (ค้นหาชื่อสถานีได้)</summary><div class="grid grid-3" style="margin:16px 0"><div><label for="browseLine">เลือกสายทาง</label><select id="browseLine"></select></div><div><label for="browseReference">เริ่มนับ กม.0 จาก</label><select id="browseReference"></select></div><div><label for="stationSearch">ค้นหาชื่อสถานี</label><input type="search" id="stationSearch" placeholder="เช่น ปราจีนบุรี"></div></div><div class="station-grid" id="stationList"></div><div id="stationCount" class="small-note"></div><div class="small-note" id="browseNote">เลข กม.แสดงตามจุด กม.0 ที่เลือก ซึ่งอาจต่างจากหลัก กม.ทางรถไฟเดิม และไม่ได้หมายความว่าทุกขบวนจอดทุกสถานี</div></details></section>
-<section class="notice"><div class="notice-card"><h2>ข้อมูลและระเบียบที่ควรทราบ</h2><ul><li>เกณฑ์ 90 / 30 / 1 วันอิงสัดส่วนระยะทางตามข้อมูลอ้างอิงที่สถานีจัดเตรียมไว้ ไม่ใช่การดึงข้อมูลสดจาก D-Ticket</li><li>เลข กม.0 เริ่มที่สถานีต้นทางของขบวนที่เลือก เช่น รถออกหัวลำโพงให้หัวลำโพง กม.0 (ชุมทางบางซื่อ กม.8) ส่วนรถออกกรุงเทพอภิวัฒน์ให้กรุงเทพอภิวัฒน์ กม.0 ระยะทางผู้โดยสารยังคำนวณจากผลต่างระยะทางสถานี</li><li>ขบวนไม่สำรองที่นั่งโดยทั่วไปซื้อในวันเดินทาง ทั้งนี้ให้ตรวจเงื่อนไขรายขบวนอีกครั้ง</li><li>ขบวนเที่ยวทะเลในชุดข้อมูลนี้ใช้หมายเลข <strong>887/888</strong> ตั้งแต่ 1 ตุลาคม 2569 ตามข้อมูลที่สถานีแจ้ง และมีเงื่อนไขเฉพาะบางช่วง</li><li>ผลคำนวณไม่ยืนยันวันเปิดขายจริง เวลาเปิดขาย หรือว่ามีที่นั่งว่าง โปรดตรวจสอบผ่าน <a href="https://dticket.railway.co.th/" target="_blank" rel="noopener noreferrer" class="buttonlink">D-Ticket</a> หรือโทร 1690</li></ul></div></section>
-<footer class="footer"><strong>สถานีรถไฟปราจีนบุรี</strong> | ระบบช่วยวางแผนวันจองตั๋วรถไฟ<br>หน้าตาอ้างอิงจากเครื่องมือคำนวณตั๋วรถไฟที่ผู้พัฒนาออกแบบเอง · ไม่รับชำระเงินหรือออกตั๋ว</footer>
+<header class="top"><div class="top-inner">
+  <div class="identity"><div class="logo" aria-hidden="true"><svg viewBox="0 0 30 30" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h14l3 5v13l-4 3H9l-4-3V9z"/><path d="M9 10h12v7H9zM10 21h2m6 0h2M7 28l4-4m12 4-4-4M11 4V2m8 2V2"/></svg></div><div><h1>สถานีรถไฟปราจีนบุรี</h1><p>PRACHINBURI RAILWAY STATION · PASSENGER INFO</p></div></div>
+  <nav class="header-links" aria-label="ลิงก์บริการ"><a href="#booking">ตรวจวันจอง</a><a href="https://www.dticket.railway.co.th/" target="_blank" rel="noopener noreferrer">D-Ticket ↗</a><a href="tel:1690" class="highlight">☎ 1690</a></nav>
+</div></header>
+<main>
+<section class="hero" aria-labelledby="page-title"><div class="hero-content"><div class="kicker"><span class="dash"></span> เครื่องมือสำหรับผู้โดยสาร</div><h2 id="page-title">เช็กวันเริ่มจองตั๋วรถไฟ<br>ง่าย ๆ ในหน้าเดียว</h2><p>เลือกสายทาง ขบวนรถ และวันที่เดินทาง เพื่อดูวันเริ่มจองโดยประมาณตามระยะทางที่เดินทาง</p><div class="hero-foot"><span><i class="spark"></i> คำนวณตามระยะทาง</span><span><i class="spark"></i> เลือกสีประจำสายรถไฟ</span><span><i class="spark"></i> เชื่อม LINE สถานี</span></div></div></section>
+<div class="workarea" id="booking">
+ <section class="card form-card" aria-labelledby="form-title">
+  <div class="card-top"><div class="card-icon" aria-hidden="true">🚆</div><div><h3 id="form-title">ข้อมูลการเดินทาง</h3><p>เลือกข้อมูล 4 ขั้นตอน แล้วตรวจวันเริ่มจอง</p></div></div>
+  <div class="form-body">
+   <div class="step-title"><span class="step-no">01</span> เลือกสายทางรถไฟ</div>
+   <div class="line-picker" role="group" aria-label="เลือกสายทางรถไฟ">
+    <button class="route route--north" type="button" data-line="north" aria-pressed="false"><span class="symbol">🚆</span><span class="route-title">สายเหนือ</span><small>สีน้ำเงิน</small></button>
+    <button class="route route--ubon" type="button" data-line="esanUbon" aria-pressed="false"><span class="symbol">🚆</span><span class="route-title">อีสาน · อุบล</span><small>สีเขียว</small></button>
+    <button class="route route--nongkhai" type="button" data-line="esanNongkhai" aria-pressed="false"><span class="symbol">🚆</span><span class="route-title">อีสาน · หนองคาย</span><small>เขียวอ่อน</small></button>
+    <button class="route route--east" type="button" data-line="east" aria-pressed="false"><span class="symbol">🚆</span><span class="route-title">สายตะวันออก</span><small>สีม่วง</small></button>
+    <button class="route route--south" type="button" data-line="south" aria-pressed="false"><span class="symbol">🚆</span><span class="route-title">สายใต้</span><small>ส้ม–เหลือง</small></button>
+   </div>
+   <p id="selectedNote" class="selected-note hidden" aria-live="polite"></p>
+   <div class="section-divider"></div>
+   <div class="step-title"><span class="step-no">02</span> เลือกขบวนรถ</div>
+   <div class="field"><label for="selectedTrain"><span class="dot"></span> หมายเลขและประเภทขบวน</label><select class="control" id="selectedTrain" disabled><option value="">เลือกสายทางก่อน</option></select><div class="hint" id="trainHint">เลือกสายทางก่อนเพื่อดูขบวนที่มีข้อมูลในระบบ</div></div>
+   <div class="section-divider"></div>
+   <div class="step-title"><span class="step-no">03</span> เลือกสถานีขึ้นและสถานีลง</div>
+   <div class="fields swap-wrap"><div class="field"><label for="passOrigin"><span class="dot"></span> สถานีขึ้น</label><select class="control" id="passOrigin" disabled><option value="">เลือกขบวนรถก่อน</option></select></div><div class="field"><label for="passDest"><span class="dot"></span> สถานีลง</label><select class="control" id="passDest" disabled><option value="">เลือกขบวนรถก่อน</option></select></div><button id="swapBtn" class="swap" type="button" title="สลับสถานีขึ้นและลง" aria-label="สลับสถานีขึ้นและลง" disabled>⇄</button></div>
+   <div class="hint">รายการสถานีเป็นข้อมูลอ้างอิง โปรดตรวจว่าขบวนจอดจริงก่อนซื้อ</div>
+   <div class="section-divider"></div>
+   <div class="step-title"><span class="step-no">04</span> เลือกวันเดินทาง</div>
+   <div class="field"><label for="travelDate"><span class="dot"></span> วันที่เดินทาง</label><input class="control" type="date" id="travelDate" required></div>
+   <button id="calculateBtn" class="calculate" type="button">⌕ &nbsp; ตรวจสอบวันเริ่มจอง &nbsp; →</button>
+  </div>
+ </section>
+ <aside id="resultSection" class="card result-card" aria-labelledby="result-title">
+  <div class="result-head"><div><h3 id="result-title">ผลการคำนวณ</h3><p>วันเริ่มจองตามข้อมูลที่เลือก</p></div><div class="result-icon" aria-hidden="true">▣</div></div>
+  <div class="result-content"><div id="resultFeedback" class="feedback" role="status" aria-live="polite" hidden></div><div id="result" aria-live="polite"><div class="placeholder"><div class="visual" aria-hidden="true">🗓️</div><strong>พร้อมตรวจวันเริ่มจอง</strong><span>เลือกสายทาง ขบวนรถ สถานี และวันเดินทาง<br>ผลคำนวณจะปรากฏตรงนี้</span></div></div></div>
+ </aside>
+</div>
+<section class="rules" aria-labelledby="rules-title"><h3 class="rules-heading" id="rules-title">◷ &nbsp; เกณฑ์จองล่วงหน้าตามระยะทาง</h3><div class="rulegrid"><div class="rule-item"><strong>90 วัน</strong><span>เดินทางตั้งแต่ 60% ของระยะทางขบวน</span></div><div class="rule-item"><strong>30 วัน</strong><span>เดินทางตั้งแต่ 25% แต่ไม่ถึง 60%</span></div><div class="rule-item"><strong>1 วัน</strong><span>เดินทางน้อยกว่า 25%</span></div></div><p class="special-note">ขบวนบางประเภทมีเงื่อนไขเฉพาะ เช่น 887/888 และขบวนไม่สำรองที่นั่ง ระบบจะใช้กติกาตามข้อมูลของขบวนนั้น</p></section>
+<section class="channellinks" aria-label="ช่องทางซื้อตั๋ว"><a class="link-tile" href="https://www.dticket.railway.co.th/" target="_blank" rel="noopener noreferrer"><div class="tile-icon" aria-hidden="true">🎟️</div><div><strong>จองผ่าน D-Ticket</strong><span>เว็บไซต์หรือแอป SRT D-Ticket</span></div><span class="arrow" aria-hidden="true">↗</span></a><a class="link-tile" href="tel:1690"><div class="tile-icon" aria-hidden="true">☎</div><div><strong>สอบถาม โทร 1690</strong><span>ศูนย์บริการลูกค้า ตลอด 24 ชั่วโมง</span></div><span class="arrow" aria-hidden="true">↗</span></a><div class="link-tile"><div class="tile-icon" aria-hidden="true">🏛</div><div><strong>ซื้อที่สถานีรถไฟ</strong><span>ติดต่อช่องจำหน่ายตั๋วทั่วประเทศ</span></div></div></section>
+<details class="palette"><summary>สีประจำสายรถไฟตามภาพอ้างอิง ▾</summary><div class="palette-grid">
+ <div class="palette-group"><h4>สายเหนือ</h4><div class="palette-chip" style="--chip:#1968ab"><i></i>เชียงใหม่</div><div class="palette-chip" style="--chip:#00b2e5"><i></i>สวรรคโลก</div><div class="palette-chip" style="--chip:#223e96"><i></i>เชียงราย</div></div>
+ <div class="palette-group"><h4>สายอีสาน</h4><div class="palette-chip" style="--chip:#599054"><i></i>อุบลราชธานี</div><div class="palette-chip" style="--chip:#a6c54c"><i></i>หนองคาย</div><div class="palette-chip" style="--chip:#76bc21"><i></i>ลำนารายณ์</div><div class="palette-chip" style="--chip:#02b08e"><i></i>นครพนม</div></div>
+ <div class="palette-group"><h4>สายตะวันออก</h4><div class="palette-chip" style="--chip:#964dae"><i></i>อรัญประเทศ</div><div class="palette-chip" style="--chip:#773dbd"><i></i>ฉะเชิงเทรา / สัตหีบ</div><div class="palette-chip" style="--chip:#7585c1"><i></i>องครักษ์</div></div>
+ <div class="palette-group"><h4>สายแม่กลอง</h4><div class="palette-chip" style="--chip:#af2756"><i></i>มหาชัย</div><div class="palette-chip" style="--chip:#a18a5e"><i></i>แม่กลอง</div></div>
+ <div class="palette-group"><h4>สายใต้</h4><div class="palette-chip" style="--chip:#ffc233"><i></i>หาดใหญ่ / สุไหงโก-ลก</div><div class="palette-chip" style="--chip:#f7962e"><i></i>ปาดังเบซาร์</div><div class="palette-chip" style="--chip:#e86e00"><i></i>นครศรีธรรมราช</div><div class="palette-chip" style="--chip:#ff810f"><i></i>กันตัง</div><div class="palette-chip" style="--chip:#b17940"><i></i>สุพรรณบุรี</div><div class="palette-chip" style="--chip:#ffd966"><i></i>กาญจนบุรี</div></div>
+ </div><p class="palette-note">สีประจำสายตามภาพที่ได้รับเป็นข้อมูลอ้างอิงด้านการออกแบบ ไม่ใช่รายการเดินรถที่มีให้จองทั้งหมดในเครื่องมือนี้</p></details>
+</main>
+<footer class="footer"><div class="footer-inner"><div><strong>สถานีรถไฟปราจีนบุรี</strong><br><small>เครื่องมือช่วยคำนวณวันเริ่มจอง ไม่ใช่ระบบจำหน่ายตั๋วหรือแสดงที่นั่งว่าง</small></div><div>ตรวจสอบวันและเวลาจำหน่ายจริงกับ <a href="https://www.dticket.railway.co.th/" target="_blank" rel="noopener noreferrer" style="text-decoration:underline">D-Ticket</a> หรือโทร 1690</div></div></footer>
 <script>
-(function(){'use strict';
-const LIFF_ID='2012068251-UMgTiJjS';
-const api=window.TrainBooking;
-const el=id=>document.getElementById(id);
-let activeMode='station',canSend=false,lastRequest='',currentResult=null,currentInput=null,sendBusy=false;
-const number=n=>Number.isFinite(n)?new Intl.NumberFormat('th-TH',{maximumFractionDigits:2}).format(n):'—';
-const dateText=iso=>iso?new Intl.DateTimeFormat('th-TH',{day:'numeric',month:'long',year:'numeric',timeZone:'Asia/Bangkok'}).format(new Date(iso+'T12:00:00Z')):'—';
-function thaiToday(){const f=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());let o={};f.forEach(x=>o[x.type]=x.value);return o.year+'-'+o.month+'-'+o.day;}
-function opt(v,t){let o=document.createElement('option');o.value=v;o.textContent=t;return o;}
-function resetSelect(id,hint,enabled){let s=el(id);s.replaceChildren(opt('',hint));s.disabled=!enabled;}
-function setStatus(text,kind){el('liffStatus').textContent=text;el('liffStatus').className='status '+(kind||'');}
-function km(line,name,from){return from?api.getKmFromTrainOrigin(line,name,from):api.getKm(line,name);}
-function trainReference(){const line=el('selectedLine').value,t=api.getTrain(line,el('selectedTrain').value);return t?t.origin:el('trainOrigin').value;}
-function refreshKmOptions(){const line=el('selectedLine').value,reference=trainReference();
- for(const id of ['trainOrigin','trainDest','passOrigin','passDest']){
-   const s=el(id);for(const o of s.options){if(!o.value)continue;
-     const n=km(line,o.value,reference);
-     // ก่อนเลือกต้นทางขบวนเอง ยังไม่สรุป กม.ของสถานีอื่นจากฐานที่ไม่แน่นอน
-     o.textContent=id==='trainOrigin'?o.value+' · จุดเริ่ม กม.0':o.value+(Number.isFinite(n)?' · กม. '+number(n):'');
-   }
- }
- el('kmReferenceNote').textContent=reference?'แสดง กม.โดยเริ่มนับ 0 จาก '+reference+' • ใช้ข้อมูลระยะทางอ้างอิง ไม่ใช่สถานะจาก D-Ticket':'เลือกขบวนหรือสถานีต้นทางของขบวนเพื่อกำหนดจุด กม.0 ก่อน';
-}
-function stationsForTrain(line,train){if(!line)return[];if(train){return api.activeStationNames(line,train)}return api.stationNames(line)}
-function selectLine(){const line=el('selectedLine').value;resetSelect('selectedTrain','ไม่ระบุขบวน / เลือกเอง',Boolean(line));(api.trainSchedules[line]||[]).forEach(t=>el('selectedTrain').appendChild(opt(t.id,t.name)));selectTrain();}
-function selectTrain(){const line=el('selectedLine').value,t=api.getTrain(line,el('selectedTrain').value),stops=stationsForTrain(line,t);for(const id of ['trainOrigin','trainDest','passOrigin','passDest']){resetSelect(id,'- เลือก -',!!line);stops.forEach(s=>el(id).appendChild(opt(s,s)));}el('trainManualBox').classList.toggle('hidden',!!t);if(t){el('trainOrigin').value=t.origin;el('trainDest').value=t.dest;}refreshKmOptions();renderResult();}
-function updateDistance(){refreshKmOptions();const line=el('selectedLine').value,t=api.getTrain(line,el('selectedTrain').value);const a=el('passOrigin').value,b=el('passDest').value,o=t?t.origin:el('trainOrigin').value,d=t?t.dest:el('trainDest').value;const t1=km(line,o,o),t2=km(line,d,o),p1=km(line,a,o),p2=km(line,b,o);const hasT=Number.isFinite(t1)&&Number.isFinite(t2),hasP=Number.isFinite(p1)&&Number.isFinite(p2);el('distanceBox').classList.toggle('hidden',!hasT&&!hasP);el('showTotal').textContent=hasT?number(t2)+' กม.':'—';el('showPassenger').textContent=hasP?number(Math.abs(p2-p1))+' กม.':'—';el('stationKm').classList.toggle('hidden',!hasP);el('stationKm').textContent=hasP?'อ้างอิง กม.0: '+o+' • '+a+' กม. '+number(p1)+' → '+b+' กม. '+number(p2):'';}
-function input(){const date=el('travelDate').value;if(activeMode==='manual'){let total=Number(el('totalDistance').value),passenger=Number(el('passengerDistance').value);if(!el('totalDistance').value||!el('passengerDistance').value||!date)return null;return {mode:'manual',totalDistance:total,passengerDistance:passenger,reservationType:el('reservationType').value,travelDate:date};}
- const line=el('selectedLine').value,trainId=el('selectedTrain').value,origin=el('passOrigin').value,destination=el('passDest').value;const train=api.getTrain(line,trainId);if(!line||!origin||!destination||!date)return null;
- return {mode:'station',line,trainId,origin,destination,travelDate:date,...(!train?{trainOrigin:el('trainOrigin').value,trainDest:el('trainDest').value,reservationType:'reserved'}:{})};}
-function requestText(i){return 'ตรวจวันจองตั๋วรถไฟ\nสายทาง: '+i.line+'\nขบวน: '+i.trainId+'\nสถานีขึ้น: '+i.origin+'\nสถานีลง: '+i.destination+'\nวันเดินทาง: '+i.travelDate;}
-function details(label,value){const div=document.createElement('div');div.className='r';const a=document.createElement('span');a.textContent=label;const b=document.createElement('b');b.textContent=value;div.append(a,b);return div;}
-function pill(title){const p=document.createElement('span');p.className='pill';p.textContent=title;return p;}
-function makeButton(label,cls,handler){const b=document.createElement('button');b.type='button';b.className='action '+(cls||'');b.textContent=label;b.addEventListener('click',handler);return b;}
-function showEmpty(){el('result').replaceChildren();const e=document.createElement('div');e.className='empty';e.innerHTML='<div class="big">🧮</div><p>กรุณาระบุข้อมูลให้ครบถ้วน<br>เพื่อคำนวณวันจองให้อัตโนมัติ</p>';el('result').append(e);}
-function renderResult(){updateDistance();lastRequest='';currentResult=null;currentInput=null;if(!api){el('result').replaceChildren();let p=document.createElement('div');p.className='error';p.textContent='ไม่พบไฟล์ advance-booking.js กรุณาตรวจว่าอัปโหลดไว้โฟลเดอร์เดียวกัน';el('result').append(p);return;}const i=input();if(!i){showEmpty();return;}let r=api.calculateBooking(i);if(!r.ok){el('result').replaceChildren();let p=document.createElement('div');p.className='error';p.textContent=r.error;el('result').append(p);return;}currentResult=r;currentInput=i;const stationTrain=i.mode==='station'&&!!i.trainId;const canBot=stationTrain&&!!api.getTrain(i.line,i.trainId)&&Array.isArray(api.getTrain(i.line,i.trainId).stops)&&api.getTrain(i.line,i.trainId).stops.length>1;
- const card=document.createElement('div');card.className='booking '+(r.type==='nonreserved'?'gray':r.days>=90?'green':r.days>=30?'blue':'gray');const inner=document.createElement('div');inner.className='booking-inner';inner.append(pill(r.type==='nonreserved'?'ซื้อในวันเดินทาง':r.type==='special-48h'?'เงื่อนไขพิเศษ 887/888':'จองล่วงหน้าตามระยะทาง'));const d=document.createElement('div');d.className='days '+(r.type==='nonreserved'?'gray':r.days>=90?'green':r.days>=30?'blue':'gray');d.textContent=r.type==='nonreserved'?'ซื้อวันเดินทาง':r.type==='special-48h'?'48 ชั่วโมง':r.days+' วัน';inner.append(d);
- const datebox=document.createElement('div');datebox.className='datebox';const s=document.createElement('div');s.className='label';s.textContent='วันเริ่มจองโดยประมาณ';const v=document.createElement('div');v.className='date';v.textContent=r.bookingDate?dateText(r.bookingDate):dateText(i.travelDate);datebox.append(s,v);const time=document.createElement('div');time.className='time';time.textContent=r.type==='nonreserved'?'ซื้อวันเดินทาง ตามเงื่อนไขรายขบวน':r.openTime?'เริ่มจองประมาณ '+r.openTime+' น.':'โปรดตรวจเวลาเปิดขายจาก D-Ticket';datebox.append(time);inner.append(datebox);
- const det=document.createElement('div');det.className='result-details';if(i.mode==='station'){const t=api.getTrain(i.line,i.trainId);det.append(details('สายทาง',api.trainData[i.line]?.name||i.line),details('ขบวนรถ',t?.name||'กำหนดต้นทาง–ปลายทางเอง'),details('สถานีขึ้น',i.origin),details('สถานีลง',i.destination));}else det.append(details('วิธีคำนวณ','กรอกระยะทางเอง'));
- if(i.mode==='station'&&r.kmReference){det.append(details('สถานีอ้างอิง กม.0',r.kmReference),details('กม.สถานีขึ้น / ลง',number(r.originKmFromTrain)+' → '+number(r.destinationKmFromTrain)));}
- det.append(details('วันที่เดินทาง',dateText(i.travelDate)),details('ระยะทางขบวน',number(r.total)+' กม.'),details('ระยะทางผู้โดยสาร',number(r.passenger)+' กม.'));if(Number.isFinite(r.percentage))det.append(details('สัดส่วนระยะทาง',number(r.percentage)+'%'));inner.append(det);
- for(const n of [r.summary,r.note,r.warning,'ผลคำนวณไม่รับประกันวันเปิดขายหรือที่นั่งว่าง'])if(n){let p=document.createElement('p');p.className='result-note';p.textContent=n;inner.append(p);}
- const sendbox=document.createElement('div');sendbox.style.display='grid';sendbox.style.gap='9px';sendbox.style.marginTop='14px';if(canBot){lastRequest=requestText(i);let send=makeButton('📩 ส่งผลตรวจเข้า LINE','',()=>sendToLine(i,send));send.id='sendLine';sendbox.append(send);let status=document.createElement('div');status.className='small-note';status.id='sendInfo';status.textContent=canSend?'พร้อมส่งเข้าห้องแชตของสถานี':'เปิดผ่าน LIFF ในแชต LINE OA เพื่อส่งคำขออัตโนมัติ';sendbox.append(status);}else{let status=document.createElement('div');status.className='status warn';status.textContent='โหมดนี้คำนวณบนหน้าเว็บได้ แต่บอต V53 ยังรับคำขอเฉพาะกรณีเลือกขบวนจากรายการที่มีสถานีจอด';sendbox.append(status);}const row=document.createElement('div');row.className='actionrow';row.append(makeButton('คัดลอกผล','light',copyResult),makeButton('เริ่มใหม่','light',resetForm));sendbox.append(row);const a=document.createElement('a');a.className='action gold';a.href='https://dticket.railway.co.th/';a.target='_blank';a.rel='noopener noreferrer';a.textContent='🎫 เปิด D-Ticket ↗';sendbox.append(a);inner.append(sendbox);card.append(inner);el('result').replaceChildren(card);
-}
-async function sendToLine(i,button){if(sendBusy)return;if(!canSend){setStatus('ต้องเปิดหน้าเว็บผ่าน LIFF จากห้องแชตส่วนตัว LINE OA ปราจีนบุรีก่อน จึงจะส่งข้อความเข้าแชตได้','warn');return;}sendBusy=true;let delivered=false;button.disabled=true;button.textContent='กำลังส่งเข้า LINE…';try{await window.liff.sendMessages([{type:'text',text:requestText(i)}]);delivered=true;setStatus('ส่งคำขอเข้า LINE เรียบร้อยแล้ว บอต V53 จะตอบรายละเอียดอัตโนมัติ','ok');let info=el('sendInfo');if(info)info.textContent='✅ ส่งคำขอเข้า LINE แล้ว กลับไปดูการ์ดตอบกลับในห้องแชต';}catch(e){setStatus('ส่งคำขอไม่สำเร็จ กรุณาลองใหม่หรือใช้ปุ่มคัดลอกข้อความ','err');}finally{sendBusy=false;button.disabled=delivered;button.textContent=delivered?'✅ ส่งผลเข้า LINE แล้ว':'📩 ส่งผลตรวจเข้า LINE';}}
-async function copyResult(){if(!currentInput||!currentResult)return;let summary=lastRequest||'ผลคำนวณวันจองตั๋วรถไฟ\nวันเดินทาง: '+currentInput.travelDate+'\nระยะทางขบวน: '+currentResult.total+' กม.\nระยะทางผู้โดยสาร: '+currentResult.passenger+' กม.\nจองล่วงหน้า: '+currentResult.days+' วัน\nวันเริ่มจอง: '+(currentResult.bookingDate||currentResult.travelDate);try{await navigator.clipboard.writeText(summary);setStatus('คัดลอกข้อมูลเรียบร้อยแล้ว','ok');}catch(e){setStatus('คัดลอกอัตโนมัติไม่ได้ กรุณาเปิดหน้าเว็บผ่านเบราว์เซอร์ที่อนุญาตคลิปบอร์ด','warn');}}
-function resetForm(){for(const id of ['selectedLine','selectedTrain','trainOrigin','trainDest','passOrigin','passDest'])el(id).value='';el('totalDistance').value='';el('passengerDistance').value='';selectLine();window.scrollTo({top:document.querySelector('.layout').offsetTop-75,behavior:'smooth'});}
-function modeTo(which){activeMode=which;el('modeStation').classList.toggle('active',which==='station');el('modeManual').classList.toggle('active',which==='manual');el('stationMode').classList.toggle('hidden',which!=='station');el('manualMode').classList.toggle('hidden',which!=='manual');let u=new URL(location.href);u.searchParams.set('mode',which);try{history.replaceState({},'',u.pathname+u.search+u.hash);}catch(e){}renderResult();}
-function chooseBrowserLine(){const line=el('browseLine').value,ref=el('browseReference');ref.replaceChildren();
- for(const name of ['กรุงเทพ (หัวลำโพง)','กรุงเทพ (อภิวัฒน์)']){
-   if(Number.isFinite(api.getKm(line,name)))ref.append(opt(name,name+' (กม.0)'));
- }
- if(!ref.options.length){const first=api.stationNames(line)[0];if(first)ref.append(opt(first,first+' (กม.0)'));}
- if(ref.options.length)ref.value=ref.options[0].value;renderBrowser();}
-function renderBrowser(){let line=el('browseLine').value,reference=el('browseReference').value,q=el('stationSearch').value.trim().toLowerCase(),refKm=api.getKm(line,reference);
- let all=(api.trainData[line]?.stations||[]).filter(s=>Number.isFinite(refKm)&&s.km>=refKm&&(reference!=='กรุงเทพ (อภิวัฒน์)'||s.name!=='ชุมทางบางซื่อ')).sort((a,b)=>a.km-b.km);
- let hit=all.filter(s=>s.name.toLowerCase().includes(q));let box=el('stationList');box.replaceChildren();let f=document.createDocumentFragment();hit.forEach(s=>{let d=document.createElement('div');d.className='station-item';let a=document.createElement('span'),b=document.createElement('strong');a.textContent=s.name;b.textContent='กม. '+number(km(line,s.name,reference));d.append(a,b);f.append(d)});box.append(f);el('stationCount').textContent='แสดง '+hit.length+' จาก '+all.length+' สถานี';el('browseNote').textContent='อ้างอิง กม.0 จาก '+reference+' • เป็นระยะห่างจากฐาน กม.ต้นทางตามชุดข้อมูล ไม่ใช่การยืนยันจุดจอดจริง';}
-async function initLiff(){if(!window.liff){setStatus('เว็บคำนวณได้ตามปกติ แต่การส่งเข้า LINE ต้องเปิดจากแชตผ่าน LIFF','warn');return;}try{await liff.init({liffId:LIFF_ID});const c=liff.getContext&&liff.getContext();canSend=!!(liff.isInClient()&&c&&c.type==='utou');setStatus(canSend?'เชื่อมต่อ LINE แล้ว ✅ สามารถส่งผลเข้าห้องแชตได้':'พร้อมคำนวณผล แต่กรุณาเปิดลิงก์นี้จากห้องแชตส่วนตัว LINE OA เพื่อส่งคำขอเข้า LINE',canSend?'ok':'warn');}catch(e){setStatus('ไม่สามารถเชื่อมต่อ LIFF ได้ โปรดตรวจ Endpoint URL และ LIFF ID — ยังใช้เครื่องคำนวณได้ตามปกติ','warn');}}
-for(const id of ['travelDate','selectedLine','selectedTrain','trainOrigin','trainDest','passOrigin','passDest','totalDistance','passengerDistance','reservationType']){el(id).addEventListener('input',()=>{if(id==='selectedLine')selectLine();else if(id==='selectedTrain')selectTrain();else renderResult();});if(['selectedLine','selectedTrain','passOrigin','passDest','trainOrigin','trainDest','reservationType'].includes(id))el(id).addEventListener('change',()=>{if(id==='selectedLine')selectLine();else if(id==='selectedTrain')selectTrain();else renderResult();});}
-el('modeStation').addEventListener('click',()=>modeTo('station'));el('modeManual').addEventListener('click',()=>modeTo('manual'));el('browseLine').addEventListener('change',chooseBrowserLine);el('browseReference').addEventListener('change',renderBrowser);el('stationSearch').addEventListener('input',renderBrowser);
-if(!api){setStatus('ไม่พบไฟล์คำนวณ advance-booking.js กรุณาอัปโหลดไฟล์คู่กัน','err');return;}Object.entries(api.trainData).forEach(([k,v])=>{el('selectedLine').append(opt(k,v.name));el('browseLine').append(opt(k,v.name))});el('browseLine').value='north';chooseBrowserLine();el('travelDate').min=thaiToday();el('travelDate').value=thaiToday();let mode=new URLSearchParams(location.search).get('mode');modeTo(mode==='manual'?'manual':'station');initLiff();
+(function(){
+  'use strict';
+  const LIFF_ID='2012068251-UMgTiJjS';
+  const byId=id=>document.getElementById(id);
+  const ROUTES={
+    north:{color:'#1968ab',soft:'#eaf3fc',name:'สายเหนือ',branch:'สายเชียงใหม่'},
+    esanUbon:{color:'#599054',soft:'#eff6ec',name:'สายอีสาน · อุบลราชธานี',branch:'สายอุบลราชธานี'},
+    esanNongkhai:{color:'#a6c54c',soft:'#f5f9e7',name:'สายอีสาน · หนองคาย',branch:'สายหนองคาย'},
+    east:{color:'#964dae',soft:'#f7edfa',name:'สายตะวันออก',branch:'สายอรัญประเทศ'},
+    south:{color:'#ffc233',soft:'#fff8e6',name:'สายใต้',branch:'สายหาดใหญ่ / สุไหงโก-ลก'}
+  };
+  let api,line='',trainId='',liffReady=false,canSend=false,sending=false,lastSent='',latestInput=null,latestResult=null;
+  const formatNum=n=>Number.isFinite(n)?new Intl.NumberFormat('th-TH',{maximumFractionDigits:1}).format(n):'—';
+  const fmtDate=iso=>iso?new Intl.DateTimeFormat('th-TH',{timeZone:'Asia/Bangkok',year:'numeric',month:'long',day:'numeric'}).format(new Date(iso+'T12:00:00Z')):'—';
+  function todayBangkok(){const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const o={};parts.forEach(p=>o[p.type]=p.value);return o.year+'-'+o.month+'-'+o.day;}
+  function fillSelect(select,names,placeholder){select.replaceChildren();const p=document.createElement('option');p.value='';p.textContent=placeholder;select.append(p);names.forEach(item=>{const e=document.createElement('option');e.value=item.value;e.textContent=item.label;select.append(e)});select.disabled=names.length===0;}
+  function make(tag,cls,txt){const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=String(txt);return n;}
+  function notify(message,type){const n=byId('resultFeedback');n.textContent=message;n.hidden=!message;n.className='feedback '+(type||'warn');}
+  function currentRoute(){let meta={...(ROUTES[line]||ROUTES.north)};const t=api&&line?api.getTrain(line,trainId):null;
+    if(line==='east' && t?.id==='887/888'){meta.color='#773dbd';meta.soft='#f2ebfc';meta.branch='สายฉะเชิงเทรา / สัตหีบ';}
+    if(line==='south'&&t){let dest=t.dest;if(dest==='นครศรีธรรมราช'){meta.color='#e86e00';meta.soft='#fff0e4';meta.branch='สายนครศรีธรรมราช';}else if(dest==='กันตัง'){meta.color='#ff810f';meta.soft='#fff2e7';meta.branch='สายกันตัง';}else if(dest==='ปาดังเบซาร์'){meta.color='#f7962e';meta.soft='#fff1df';meta.branch='สายปาดังเบซาร์';}else if(dest==='กาญจนบุรี'){meta.color='#ffd966';meta.soft='#fff9e4';meta.branch='สายกาญจนบุรี';}else if(dest==='สุพรรณบุรี'){meta.color='#b17940';meta.soft='#f8eee3';meta.branch='สายสุพรรณบุรี';}}
+    return meta;
+  }
+  function applyColors(){const m=currentRoute();const area=byId('booking');area.style.setProperty('--accent',m.color);area.style.setProperty('--accent-soft',m.soft);
+    byId('selectedNote').classList.toggle('hidden',!line);
+    byId('selectedNote').replaceChildren();if(line){byId('selectedNote').append(make('span','',m.name),make('strong','',m.branch+' ●'));}
+  }
+  function setLine(next){line=next;trainId='';document.querySelectorAll('[data-line]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.line===line)));
+    const trains=api.trainSchedules[line]||[];fillSelect(byId('selectedTrain'),trains.map(t=>({value:t.id,label:t.name})),'เลือกหมายเลขขบวนรถ');
+    byId('trainHint').textContent=line?'เลือกขบวนให้ตรงกับการเดินทาง เพื่อคำนวณระยะทาง':'เลือกสายทางก่อนเพื่อดูขบวนที่มีข้อมูลในระบบ';
+    clearStations();applyColors();render();
+  }
+  function clearStations(){fillSelect(byId('passOrigin'),[],'เลือกขบวนรถก่อน');fillSelect(byId('passDest'),[],'เลือกขบวนรถก่อน');byId('swapBtn').disabled=true;}
+  function setTrain(next){trainId=next;const t=api.getTrain(line,trainId);if(!t){clearStations();applyColors();render();return;}
+    const stops=api.activeStationNames(line,t),stationOpts=stops.map(s=>({value:s,label:s}));
+    fillSelect(byId('passOrigin'),stationOpts,'เลือกสถานีขึ้น');fillSelect(byId('passDest'),stationOpts,'เลือกสถานีลง');
+    byId('swapBtn').disabled=stationOpts.length<2;
+    applyColors();render();
+  }
+  function input(){const origin=byId('passOrigin').value,destination=byId('passDest').value,travelDate=byId('travelDate').value;
+    if(!line||!trainId||!origin||!destination||!travelDate)return null;
+    return {mode:'station',line,trainId,origin,destination,travelDate};
+  }
+  function formatRequest(i){return 'ตรวจวันจองตั๋วรถไฟ\nสายทาง: '+i.line+'\nขบวน: '+i.trainId+'\nสถานีขึ้น: '+i.origin+'\nสถานีลง: '+i.destination+'\nวันเดินทาง: '+i.travelDate;}
+  function empty(){const n=make('div','placeholder');const img=make('div','visual','🗓️');img.setAttribute('aria-hidden','true');n.append(img,make('strong','','พร้อมตรวจวันเริ่มจอง'),make('span','','เลือกสายทาง ขบวนรถ สถานีขึ้น–ลง และวันเดินทาง\nเพื่อดูผลคำนวณ'));byId('result').replaceChildren(n);}
+  function render(){notify('',null);lastSent='';latestInput=null;latestResult=null;
+    if(!api){byId('result').replaceChildren(make('p','result-warning','ไม่พบไฟล์คำนวณ advance-booking.js กรุณาอัปโหลดไว้คู่กับหน้าเว็บ'));return;}
+    const i=input();if(!i){empty();return;}
+    const r=api.calculateBooking(i);
+    if(!r.ok){byId('result').replaceChildren(make('div','result-warning',r.error));return;}
+    latestInput=i;latestResult=r;
+    const meta=currentRoute(),t=api.getTrain(line,trainId), root=make('div','');
+    root.append(make('div','result-route','●  '+meta.branch));
+    root.append(make('div','train-name',(t?t.name:'ขบวนรถ')+' · '+i.origin+' → '+i.destination));
+    const big=make('div','result-big');
+    const label=r.type==='nonreserved'?'วันที่เดินทาง':'วันที่คาดว่าเริ่มจอง';
+    big.append(make('div','mini',label),make('div','date',fmtDate(r.bookingDate||i.travelDate)));
+    const time=make('div','time');
+    if(r.type==='nonreserved'){time.textContent='ซื้อตั๋วในวันเดินทาง ตามเงื่อนไขขบวน';}
+    else if(r.type==='special-48h'){time.textContent='ภายใน 48 ชั่วโมงก่อนออกจากสถานีขึ้น · ต้องตรวจเวลาออกจริง';}
+    else if(r.type==='special-1day'){time.textContent='ขบวนพิเศษ · ตรวจเวลาเริ่มขายจาก D-Ticket';}
+    else if(r.openTime){time.textContent='เวลาเริ่มจองตามเกณฑ์ '+r.openTime.replace(':','.')+' น.';}
+    else {time.textContent='ตรวจเวลาเปิดจองจาก D-Ticket';}
+    big.append(time);root.append(big);
+    const ns=make('div','numbers');const values=[['เดินทาง',formatNum(r.passenger)+' กม.'],['ระยะทางขบวน',formatNum(r.total)+' กม.'],['สัดส่วน',Number.isFinite(r.percentage)?formatNum(r.percentage)+'%':'—']];
+    values.forEach(([label,value])=>{const e=make('div','number');e.append(make('strong','',value),make('span','',label));ns.append(e);});root.append(ns);
+    if(r.type==='special-48h'||r.type==='special-1day'||r.type==='nonreserved')root.append(make('p','result-warning',r.note||'ขบวนนี้มีเงื่อนไขจำหน่ายเฉพาะ โปรดตรวจสอบก่อนซื้อตั๋ว'));
+    if(r.warning)root.append(make('p','result-warning',r.warning));
+    root.append(make('p','share-note','ผลคำนวณเป็นข้อมูลเบื้องต้น ไม่ยืนยันว่าระบบจำหน่ายเปิดจริงหรือมีที่นั่งว่าง'));
+    const send=make('button','action-line',canSend?'↗ ส่งคำขอตรวจสอบเข้า LINE':'↗ ส่งคำขอผ่าน LINE');send.id='sendLine';send.type='button';send.addEventListener('click',()=>sendRequest());root.append(send);
+    const acts=make('div','sub-actions');const copy=make('button','', 'คัดลอกผล');copy.type='button';copy.addEventListener('click',()=>copyResult());const a=make('a','','เปิด D-Ticket ↗');a.href='https://www.dticket.railway.co.th/';a.target='_blank';a.rel='noopener noreferrer';acts.append(copy,a);root.append(acts);
+    if(!canSend)root.append(make('p','share-note','หากไม่ได้เปิดจากแชต LINE ระบบจะช่วยคัดลอกคำขอเพื่อนำไปวางในแชตของสถานี'));
+    byId('result').replaceChildren(root);
+  }
+  async function copyText(text){try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);return true;}}catch(e){}
+    try{const t=document.createElement('textarea');t.value=text;t.style.position='fixed';t.style.top='0';t.style.opacity='0';document.body.append(t);t.focus();t.select();const ok=document.execCommand('copy');t.remove();return ok;}catch(e){return false;}
+  }
+  async function copyResult(){if(!latestInput||!latestResult)return;
+    const r=latestResult,i=latestInput;
+    const text=['ผลคำนวณวันเริ่มจองตั๋วรถไฟ','ขบวน: '+i.trainId,'สถานีขึ้น: '+i.origin,'สถานีลง: '+i.destination,'วันเดินทาง: '+i.travelDate,'ระยะทางผู้โดยสาร: '+r.passenger+' กม.','วันเริ่มจองโดยประมาณ: '+(r.bookingDate||i.travelDate),r.openTime&&r.type==='standard'?'เวลา: '+r.openTime+' น.':'ตรวจเวลาเริ่มจำหน่ายจริงจาก D-Ticket'].join('\n');
+    notify(await copyText(text)?'คัดลอกผลคำนวณแล้ว':'เบราว์เซอร์ไม่อนุญาตให้คัดลอก กรุณาเปิดหน้าเว็บในเบราว์เซอร์ที่รองรับ','warn');
+  }
+  async function sendRequest(){if(!latestInput||sending)return;const query=formatRequest(latestInput);
+    if(query===lastSent){notify('ส่งคำขอนี้แล้ว กรุณาตรวจข้อความและการตอบกลับในห้องแชต LINE','success');return;}
+    if(!canSend){const copied=await copyText(query);notify(copied?'คัดลอกคำขอแล้ว กรุณาเปิดแชต LINE OA สถานีปราจีนบุรีและวางข้อความเพื่อให้บอตตอบ':'เปิดลิงก์นี้จากห้องแชต LINE OA ของสถานี เพื่อส่งคำขอผ่าน LIFF','warn');return;}
+    sending=true;const btn=byId('sendLine');if(btn){btn.disabled=true;btn.textContent='กำลังส่งคำขอ…';}
+    try{await window.liff.sendMessages([{type:'text',text:query}]);lastSent=query;notify('ส่งคำขอเข้าแชต LINE แล้ว กรุณากลับไปดูคำตอบจากบอต หากไม่มีคำตอบให้ตรวจ Webhook','success');if(btn)btn.textContent='✓ ส่งคำขอแล้ว';}
+    catch(err){notify('ส่งเข้า LINE ไม่สำเร็จ กรุณาลองใหม่ หรือใช้ปุ่มคัดลอกผล','error');if(btn){btn.disabled=false;btn.textContent='↗ ส่งคำขอผ่าน LINE';}}
+    finally{sending=false;}
+  }
+  function check(){const need=[['selectedTrain','กรุณาเลือกขบวนรถ'],['passOrigin','กรุณาเลือกสถานีขึ้น'],['passDest','กรุณาเลือกสถานีลง'],['travelDate','กรุณาเลือกวันที่เดินทาง']];
+    if(!line){notify('กรุณาเลือกสายทางรถไฟก่อน','warn');byId('resultSection').scrollIntoView({behavior:'smooth',block:'start'});return;}
+    for(const [id,msg] of need){if(!byId(id).value){notify(msg,'warn');byId(id).focus();return;}}
+    render();byId('resultSection').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  async function connectLiff(){if(typeof window.liff==='undefined')return;
+    try{await window.liff.init({liffId:LIFF_ID});liffReady=true;const ctx=window.liff.getContext?.();canSend=Boolean(window.liff.isInClient()&&ctx&&ctx.type==='utou');if(latestResult)render();}
+    catch(e){liffReady=false;canSend=false;}
+  }
+  function init(){api=window.TrainBooking;if(!api){notify('ไม่พบไฟล์ advance-booking.js กรุณาอัปโหลดคู่กับหน้าเว็บ','error');return;}
+    byId('travelDate').min=todayBangkok();byId('travelDate').value=todayBangkok();
+    document.querySelectorAll('.route').forEach(b=>b.addEventListener('click',()=>setLine(b.dataset.line)));
+    byId('selectedTrain').addEventListener('change',e=>setTrain(e.target.value));
+    byId('passOrigin').addEventListener('change',render);byId('passDest').addEventListener('change',render);byId('travelDate').addEventListener('change',render);
+    byId('calculateBtn').addEventListener('click',check);
+    byId('swapBtn').addEventListener('click',()=>{const x=byId('passOrigin'),y=byId('passDest'),v=x.value;x.value=y.value;y.value=v;render();});
+    // No visible kilometer-station directory: kilometers are used only by the calculation engine.
+    applyColors();empty();connectLiff();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
+
 </script>
 </body>
 </html>
