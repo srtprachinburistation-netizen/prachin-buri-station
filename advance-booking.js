@@ -50,7 +50,7 @@ const trainData = {
                 north: {
                     name: "สายเหนือ (กทม.-เชียงใหม่)",
                     stations: [
-                        { name: "กรุงเทพ (หัวลำโพง)", km: 0 }, { name: "สามเสน", km: 5 }, { name: "ชุมทางบางซื่อ", km: 7 }, 
+                        { name: "กรุงเทพ (หัวลำโพง)", km: 0 }, { name: "สามเสน", km: 5 }, { name: "ชุมทางบางซื่อ", km: 8 }, 
                         { name: "กรุงเทพ (อภิวัฒน์)", km: 8 }, { name: "บางเขน", km: 13 }, { name: "หลักสี่", km: 18 }, 
                         { name: "ดอนเมือง", km: 22 }, { name: "หลักหก", km: 26 }, { name: "รังสิต", km: 30 }, 
                         { name: "คลองหนึ่ง", km: 34 }, { name: "เชียงราก", km: 37 }, { name: "มหาวิทยาลัยธรรมศาสตร์", km: 40 },
@@ -165,7 +165,7 @@ const trainData = {
                 esanNongkhai: {
                     name: "สายอีสาน (ไปหนองคาย)",
                     stations: [
-                        { name: "กรุงเทพ (หัวลำโพง)", km: 0 }, { name: "สามเสน", km: 5 }, { name: "ชุมทางบางซื่อ", km: 7 }, 
+                        { name: "กรุงเทพ (หัวลำโพง)", km: 0 }, { name: "สามเสน", km: 5 }, { name: "ชุมทางบางซื่อ", km: 8 }, 
                         { name: "กรุงเทพ (อภิวัฒน์)", km: 8 }, { name: "บางเขน", km: 13 }, { name: "หลักสี่", km: 18 }, 
                         { name: "ดอนเมือง", km: 22 }, { name: "รังสิต", km: 30 }, { name: "เชียงราก", km: 37 }, 
                         { name: "นวนคร", km: 44 }, { name: "เชียงรากน้อย", km: 46 }, { name: "บางปะอิน", km: 58 },
@@ -193,7 +193,7 @@ const trainData = {
                     name: "สายอีสาน (ไปอุบลราชธานี)",
                     stations: [
                         { name: "กรุงเทพ (หัวลำโพง)", km: 0 }, { name: "รพ.รามาธิบดี", km: 3 }, { name: "สามเสน", km: 5 }, 
-                        { name: "ชุมทางบางซื่อ", km: 7 }, { name: "กรุงเทพ (อภิวัฒน์)", km: 8 }, { name: "บางเขน", km: 13 }, 
+                        { name: "ชุมทางบางซื่อ", km: 8 }, { name: "กรุงเทพ (อภิวัฒน์)", km: 8 }, { name: "บางเขน", km: 13 }, 
                         { name: "หลักสี่", km: 18 }, { name: "ดอนเมือง", km: 22 }, { name: "รังสิต", km: 30 }, 
                         { name: "เชียงราก", km: 37 }, { name: "นวนคร", km: 44 }, { name: "เชียงรากน้อย", km: 46 }, 
                         { name: "บางปะอิน", km: 58 }, { name: "อยุธยา", km: 71 }, { name: "บ้านดอนกลาง", km: 82 },
@@ -352,6 +352,14 @@ const trainSchedules = {
   function exactStation(line, name){return Boolean((trainData[line]?.stations||[]).some(s=>s.name===name))}
 function getKm(line, stationName){const s=(trainData[line]?.stations||[]).find(item=>item.name===stationName);return s?Number(s.km):null}
 function getTrain(line, id){return (trainSchedules[line]||[]).find(t=>t.id===id)||null}
+
+// กม.แสดงผล: นับใหม่จากต้นทางของขบวนที่เลือก (หัวลำโพง/กรุงเทพอภิวัฒน์ = 0 เมื่อเป็นต้นทาง)
+// ค่า chainage ของสถานีใน trainData คงไว้สำหรับคำนวณระยะทางจริงและกฎเฉพาะ 887/888
+function getKmFromTrainOrigin(line, stationName, trainOrigin) {
+  const stationKm=getKm(line,stationName), originKm=getKm(line,trainOrigin);
+  return Number.isFinite(stationKm)&&Number.isFinite(originKm)?Math.abs(stationKm-originKm):null;
+}
+
 function getReservationType(train){if(!train)return '';return /(ธรรมดา|ชานเมือง|ท้องถิ่น|ที่นั่งอิสระ|non[-\s]?reserved)/i.test(`${train.id||''} ${train.name||''}`)?'nonreserved':'reserved'}
 function stationNames(line){return (trainData[line]?.stations||[]).map(s=>s.name)}
 function activeStationNames(line, train){if(!line)return[];const all=stationNames(line);if(!train)return all;if(Array.isArray(train.stops)&&train.stops.length)return train.stops.filter(name=>all.includes(name));return all.filter(name=>{const km=getKm(line,name),a=getKm(line,train.origin),b=getKm(line,train.dest);return Number.isFinite(km)&&Number.isFinite(a)&&Number.isFinite(b)&&km>=Math.min(a,b)&&km<=Math.max(a,b)})}
@@ -430,7 +438,10 @@ function classify887888(p1,p2){if(!Number.isFinite(p1)||!Number.isFinite(p2))ret
       ok: true, travelDate, origin, destination, line,
       trainId: train ? train.id : '', trainName: train ? train.name : '',
       total: Number.isFinite(total) ? total : null,
-      passenger: Number.isFinite(passenger) ? passenger : null
+       passenger: Number.isFinite(passenger) ? passenger : null,
+       kmReference: mode==='station' ? trainOrigin : '',
+       originKmFromTrain: mode==='station' ? getKmFromTrainOrigin(line,origin,trainOrigin) : null,
+       destinationKmFromTrain: mode==='station' ? getKmFromTrainOrigin(line,destination,trainOrigin) : null
     };
 
     // ขบวนไม่สำรองที่นั่งไม่ใช้เกณฑ์ระยะทาง ตามลำดับตรวจในต้นฉบับ
@@ -504,7 +515,7 @@ function classify887888(p1,p2){if(!Number.isFinite(p1)||!Number.isFinite(p2))ret
   const api = Object.freeze({
     calculateBooking, bookingDaysFromPercentage, classify887888,
     BOOKING_RULES, trainData, trainSchedules,
-    stationNames, activeStationNames, getKm, getTrain
+    stationNames, activeStationNames, getKm, getKmFromTrainOrigin, getTrain
   });
   if (typeof module === 'object' && module.exports) module.exports = api;
   else root.TrainBooking = api;
