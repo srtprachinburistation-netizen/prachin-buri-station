@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#82161a">
+<title>เช็กวันเปิดจองตั๋วรถไฟ • สถานีปราจีนบุรี</title>
+<style>
+:root{--wine:#82161a;--deep:#5d0e11;--gold:#c9a24d;--ink:#182230;--muted:#667085;--bg:#f7f6f4;--line:#e4e7ec}
+*{box-sizing:border-box}html,body{margin:0}body{font-family:system-ui,'Noto Sans Thai',Tahoma,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+main{max-width:620px;margin:0 auto;padding:12px 12px 36px}.hero{background:linear-gradient(125deg,var(--deep),var(--wine));color:white;padding:22px 22px 26px;border-radius:19px;margin:4px 0 14px}.hero small{color:#f4dca2;font-size:12px}.hero h1{font-size:22px;margin:8px 0}.hero p{font-size:13px;color:#f2dfe0;margin:0}
+.panel{border:1px solid #e8dfdb;background:white;border-radius:18px;padding:18px 17px;margin:12px 0;box-shadow:0 5px 18px rgba(65,12,18,.035)}.panel h2{font-size:16px;margin:0 0 14px}.field{margin:0 0 16px}.field label{display:block;font-weight:700;font-size:14px;margin-bottom:7px}.field select,.field input{width:100%;background:#fff;border:1px solid #cdd2d9;border-radius:11px;min-height:47px;padding:10px 11px;font-size:16px;color:#182230}.field input:focus,.field select:focus,button:focus-visible,a:focus-visible{outline:3px solid #dbbf86;outline-offset:2px}.field select:disabled{background:#f4f4f4;color:#888}.hint{font-size:12px;color:var(--muted);margin:-3px 0 12px}.btn{display:block;width:100%;border:0;border-radius:11px;min-height:52px;padding:12px 14px;font-size:16px;font-weight:700;background:var(--wine);color:white;cursor:pointer}.btn:disabled{opacity:.5;cursor:wait}.btn.light{background:#fff;color:var(--wine);border:1px solid #c7a6a2}.btn.link{background:#fff9ea;border:1px solid #ecd8a5;color:#5a3511;text-decoration:none;text-align:center;margin:8px 0}.notice{border-radius:11px;padding:11px 12px;background:#fff7e7;font-size:12px;color:#714f0d;margin:12px 0}.status{font-size:13px;color:#47624a;margin:9px 0}.error{font-size:13px;color:#a12424;background:#fff0f0;padding:11px 12px;border-radius:10px;margin:10px 0}.result{display:none}.result.show{display:block}.resultgrid{display:grid;grid-template-columns:110px 1fr;gap:10px;font-size:14px}.resultgrid dt{color:var(--muted)}.resultgrid dd{font-weight:600;margin:0;overflow-wrap:anywhere}.line{height:1px;background:var(--line);margin:15px 0}.focus{background:#fff6e5;color:var(--deep);border-radius:11px;padding:13px;margin:12px 0}.focus .large{font-weight:800;font-size:21px}.flex{display:flex;gap:9px;flex-wrap:wrap}.flex>*{flex:1;min-width:150px}footer{text-align:center;color:#888;font-size:11px;padding:14px 4px}.hidden{display:none}@media(min-width:700px){main{padding-top:24px}}
+</style>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script src="./advance-booking.js"></script>
+</head>
+<body>
+<main>
+<header class="hero"><small>PRACHINBURI RAILWAY STATION</small><h1>📅 เช็กวันเปิดจองตั๋วรถไฟ</h1><p>วางแผนจองตั๋วทางไกลง่าย ๆ พร้อมรับรายละเอียดทาง LINE</p></header>
+<section class="panel" aria-labelledby="choose"><h2 id="choose">เลือกข้อมูลการเดินทาง</h2>
+<form id="form">
+<div class="field"><label for="line">1. สายรถไฟ</label><select id="line" required><option value="">— เลือกสายรถไฟ —</option></select></div>
+<div class="field"><label for="train">2. ขบวนรถ</label><select id="train" required disabled><option value="">— เลือกขบวนรถ —</option></select></div>
+<div class="field"><label for="origin">3. สถานีขึ้น</label><select id="origin" required disabled><option value="">— เลือกสถานีขึ้น —</option></select></div>
+<div class="field"><label for="dest">4. สถานีลง</label><select id="dest" required disabled><option value="">— เลือกสถานีลง —</option></select></div>
+<div class="field"><label for="date">5. วันเดินทาง</label><input id="date" type="date" required></div>
+<p class="hint">แสดงเฉพาะขบวนที่มีข้อมูลสถานีจอดในรายการอ้างอิง • หากไม่พบขบวน ให้ตรวจสอบผ่าน D-Ticket</p>
+<button class="btn" id="check" type="submit">เช็กวันจองและส่งผลเข้า LINE</button>
+</form>
+<div id="message" role="status" aria-live="polite"></div>
+</section>
+<section class="panel result" id="result" aria-label="ผลการคำนวณ"><h2>ผลตรวจสอบเบื้องต้น</h2><dl class="resultgrid" id="details"></dl>
+<div class="focus"><div>วันเปิดจองโดยประมาณ</div><div class="large" id="sale"></div><div id="time"></div></div>
+<div id="sendinfo" class="status"></div>
+<div class="flex"><button id="retry" class="btn light" type="button">ตรวจรายการอื่น</button><button id="copy" class="btn light" type="button">คัดลอกคำขอ</button></div>
+<a class="btn link" href="https://dticket.railway.co.th" target="_blank" rel="noopener noreferrer">เปิด D-Ticket ↗</a>
+</section>
+<div class="notice">ผลคำนวณเป็นข้อมูลอ้างอิงจากไฟล์ที่สถานีจัดเตรียม ไม่ใช่ข้อมูลสด และไม่ได้ยืนยันว่ามีที่นั่งว่าง เวลาเปิดขายจริงและสิทธิ์จองให้ยึด D-Ticket หรือเจ้าหน้าที่การรถไฟฯ เป็นหลัก</div>
+<footer>สถานีรถไฟปราจีนบุรี • เครื่องมือช่วยวางแผน ไม่รับชำระเงินหรือออกตั๋ว</footer>
+</main>
+<script>
+(function(){'use strict';
+const LIFF_ID='2010528686-0k3wsl1F';
+const api=window.TrainBooking, $=id=>document.getElementById(id);
+let isReady=false, canSend=false, requestText='';
+function show(msg,error){$('message').className=error?'error':'status';$('message').textContent=msg;}
+function option(v,t){let el=document.createElement('option');el.value=v;el.textContent=t;return el;}
+function clear(sel,label){sel.innerHTML='';sel.appendChild(option('',label));}
+function getThaiToday(){const p=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());let x={};p.forEach(i=>x[i.type]=i.value);return x.year+'-'+x.month+'-'+x.day;}
+function initializeForm(){if(!api){show('โหลดข้อมูลเครื่องคำนวณไม่สำเร็จ กรุณาลองใหม่',true);$('check').disabled=true;return;}
+ Object.keys(api.trainData).forEach(k=>$('line').appendChild(option(k,api.trainData[k].name)));
+ $('date').min=getThaiToday();$('date').value=getThaiToday();
+ $('line').addEventListener('change',chooseTrains);$('train').addEventListener('change',chooseStations);
+}
+function chooseTrains(){clear($('train'),'— เลือกขบวนรถ —');clear($('origin'),'— เลือกสถานีขึ้น —');clear($('dest'),'— เลือกสถานีลง —');
+ const line=$('line').value;const trains=(api.trainSchedules[line]||[]).filter(t=>Array.isArray(t.stops)&&t.stops.length>1);
+ trains.forEach(t=>$('train').appendChild(option(t.id,t.name)));$('train').disabled=!trains.length;$('origin').disabled=true;$('dest').disabled=true;
+}
+function chooseStations(){clear($('origin'),'— เลือกสถานีขึ้น —');clear($('dest'),'— เลือกสถานีลง —');const line=$('line').value,id=$('train').value,t=api.getTrain(line,id);
+ const stops=t?api.activeStationNames(line,t):[];stops.forEach(s=>{$('origin').appendChild(option(s,s));$('dest').appendChild(option(s,s));});$('origin').disabled=!stops.length;$('dest').disabled=!stops.length;
+}
+async function initLiff(){if(!window.liff){show('เปิดใน LINE เพื่อส่งผลกลับแชต หรือใช้ปุ่มคัดลอกผล',false);return;}
+ try{await liff.init({liffId:LIFF_ID});isReady=true;const context=liff.getContext&&liff.getContext();canSend=!!(liff.isInClient()&&context&&context.type==='utou');
+ if(!canSend)show('เปิดจากห้องแชตส่วนตัวของ LINE OA เพื่อรับข้อความตอบกลับอัตโนมัติ; หน้านี้ยังคำนวณให้ดูได้',false);
+ else show('พร้อมส่งผลกลับแชต LINE ของสถานี',false);
+ }catch(err){show('ยังเชื่อมต่อ LIFF ไม่ได้ กรุณาตรวจการตั้งค่า LIFF หรือใช้คัดลอกคำขอ: '+String(err.message||err),true);}}
+function addRow(dt,label,value){let a=document.createElement('dt'),b=document.createElement('dd');a.textContent=label;b.textContent=value;dt.append(a,b);}
+function setResult(x,input){$('result').classList.add('show');let dt=$('details');dt.innerHTML='';let train=api.getTrain(input.line,input.trainId);
+ [['สายทาง',api.trainData[input.line].name],['ขบวน',train.name],['สถานีขึ้น',input.origin],['สถานีลง',input.destination],['วันเดินทาง',api.calculateBooking?thaiDate(x.travelDate):x.travelDate]].forEach(r=>addRow(dt,r[0],r[1]));
+ $('sale').textContent=x.type==='nonreserved'?'ซื้อในวันเดินทาง':thaiDate(x.bookingDate);
+ $('time').textContent=x.type==='nonreserved'?'โปรดตรวจเงื่อนไขการจำหน่าย':x.openTime?'เวลา '+x.openTime+' น.':'โปรดตรวจเวลาเปิดขายกับ D-Ticket';
+ $('sendinfo').textContent='ผลคำนวณยังไม่ยืนยันที่นั่งว่าง';
+}
+function thaiDate(d){if(!d)return '—';const p=d.split('-');return p[2]+'/'+p[1]+'/'+String(Number(p[0])+543);}
+function getRequestText(x){return 'ตรวจวันจองตั๋วรถไฟ\nสายทาง: '+x.line+'\nขบวน: '+x.trainId+'\nสถานีขึ้น: '+x.origin+'\nสถานีลง: '+x.destination+'\nวันเดินทาง: '+x.travelDate;}
+function clearBusy(){ $('check').disabled=false;$('check').textContent='เช็กวันจองและส่งผลเข้า LINE'; }
+$('form').addEventListener('submit',async function(e){e.preventDefault();$('check').disabled=true;$('check').textContent='กำลังตรวจ...';
+ const input={mode:'station',line:$('line').value,trainId:$('train').value,origin:$('origin').value,destination:$('dest').value,travelDate:$('date').value};
+ const train=api&&api.getTrain(input.line,input.trainId);
+ if(!train||!Array.isArray(train.stops)||train.stops.length<2){show('ข้อมูลขบวนไม่ครบ กรุณาเลือกขบวนอีกครั้ง',true);clearBusy();return;}
+ const result=api.calculateBooking(input);
+ if(!result.ok){show(result.error||'คำนวณไม่สำเร็จ',true);clearBusy();return;}
+ requestText=getRequestText(input);setResult(result,input);
+ if(!canSend){show('คำนวณเรียบร้อยแล้ว แต่การส่งกลับอัตโนมัติต้องเปิดจากแชตส่วนตัว LINE OA ผ่านลิงก์ LIFF กรุณาคัดลอกคำขอแล้วส่งในแชต',false);clearBusy();return;}
+ try{await liff.sendMessages([{type:'text',text:requestText}]);$('sendinfo').textContent='ส่งคำขอเข้า LINE แล้ว บอตจะตอบรายละเอียดในห้องแชต';show('ส่งคำขอเข้า LINE แล้ว ✅',false);clearBusy();setTimeout(()=>{try{liff.closeWindow();}catch(e){}},550);
+ }catch(err){show('ส่งคำขอเข้า LINE ไม่สำเร็จ: '+String(err.message||err)+' — ลองใช้ปุ่มคัดลอกคำขอ',true);clearBusy();}
+});
+$('retry').addEventListener('click',()=>{$('result').classList.remove('show');$('message').textContent='';$('line').focus();});
+$('copy').addEventListener('click',async()=>{if(!requestText)return;try{await navigator.clipboard.writeText(requestText);show('คัดลอกข้อความแล้ว นำไปวางในแชต LINE OA เพื่อรับการ์ดตอบกลับ',false);}catch(e){show('คัดลอกอัตโนมัติไม่ได้ โปรดลองเปิดหน้านี้ผ่าน LINE',true);}});
+initializeForm();initLiff();
+})();
+</script>
+</body>
+</html>
